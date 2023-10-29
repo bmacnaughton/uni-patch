@@ -4,5 +4,6 @@ import "./3.cjs";
 
 import "./1.mjs"
 import "./2.mjs"
+import "./3.mjs"
 
-console.log("1.mjs done");
+console.log("entrypoint.mjs done");
