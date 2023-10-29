@@ -5,5 +5,14 @@ export async function resolve(specifier, context, nextResolve) {
 
 export const load = async (url, context, nextLoad) => {
   console.log("ESM HOOK -> LOAD", url);
+
+  if (url === 'node:http') {
+    return {
+      source: 'export default {fake: true}',
+      shortCircuit: true,
+      format: 'module'
+    }
+  }
+ 
   return nextLoad(url, context);
 };
