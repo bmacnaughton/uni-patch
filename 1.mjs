@@ -1,5 +1,5 @@
-import "./1.cjs";
-import "./2.cjs";
-import "./3.cjs";
+import http from 'node:http';
+
+console.log("ESM -> import from 'http':", http);
 
 console.log("1.mjs done");
