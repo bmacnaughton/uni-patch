@@ -8,7 +8,7 @@ export const load = async (url, context, nextLoad) => {
 
   if (url === 'node:http') {
     return {
-      source: 'export default {fake: true}',
+      source: 'export default {fake: true, source: "esm hook"}',
       shortCircuit: true,
       format: 'module'
     }
