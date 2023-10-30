@@ -1,20 +1,33 @@
 import {readFile} from 'node:fs/promises';
+import Module from 'node:module';
+
+const [major, minor] = process.versions.node.split('.').map(it => +it);
+const isLT16_12 = major < 16 || (major === 16 && minor < 12);
 
 const modulesToPatch = ['node:http'] // for 'http' and other builtins without 'node:' we can just add 'node:' prefix before making decision
 const moduleMocks = {
   "http": new URL('./http-mock.mjs', import.meta.url)
 }
 
-//export function globalPreload() {
-//  console.log("ESM HOOK -> GLOBAL PRELOAD");
-//  return '';
-//}
+const globalPreload = !Module.register && function({port}) {
+  port.on('message', msg => {
+    console.log("ESM HOOK -> GLOBAL PRELOAD -> MESSAGE", msg);
+  });
+  console.log("ESM HOOK -> GLOBAL PRELOAD");
+  port.unref();
+  return 'global.__csiPostMessage = d => port.postMessage(d);';
+}
 
-export async function initialize() {
+const initialize = Module.register && async function(data) {
+  if (data?.port) {
+    data.port.on('message', msg => {
+      console.log("ESM HOOK -> INIT -> MESSAGE", msg);
+    });
+  }
   console.log("ESM HOOK -> INIT");
 }
 
-export async function resolve(specifier, context, nextResolve) {
+const resolve = async function(specifier, context, nextResolve) {
   console.log("ESM HOOK -> RESOLVE", specifier);
 
   const isMockFile = context.parentURL?.endsWith('fake=1') === true;
@@ -28,10 +41,10 @@ export async function resolve(specifier, context, nextResolve) {
     }
   }
 
-  return nextResolve(specifier, context);
+  return protectedNextResolve(nextResolve, specifier, context);
 }
 
-export const load = async (url, context, nextLoad) => {
+const load = async function(url, context, nextLoad) {
   console.log("ESM HOOK -> LOAD", url);
 
   const urlObject = new URL(url);
@@ -53,7 +66,7 @@ export const load = async (url, context, nextLoad) => {
   return nextLoad(url, context);
 };
 
-function protectedNextResolve(nextResolve, specifier, context) {
+async function protectedNextResolve(nextResolve, specifier, context) {
   if (context.parentURL) {
     if (context.conditions.slice(-1)[0] === 'node-addons' || context.importAssertions || isLT16_12) {
       return nextResolve(specifier, context);
@@ -61,4 +74,15 @@ function protectedNextResolve(nextResolve, specifier, context) {
   }
 
   return nextResolve(specifier);
+}
+
+const getSource = isLT16_12 && load;
+
+export {
+  load,
+  resolve,
+  getSource,
+  initialize,
+  globalPreload,
+  //loaderIsVerified as default
 }
