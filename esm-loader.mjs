@@ -7,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 // --require === --require ./hook.cjs
 // --loader === --loader ./esm-loader.mjs
 // --import === --import ./esm-loader.mjs
+// 'http' is 'node:http'
 //
 // node version | cmdline            | results
 // ------------ | ------------------ | -------
@@ -17,20 +18,23 @@ import { pathToFileURL } from 'node:url';
 // -------------------------------------------
 // 18.18.2      | --import
 //              | --require --import
-//   - ESM import from 'node:http' NOT MOCKED
+//   - ESM import from 'http' NOT MOCKED
 //   - CJS import('http') NOT MOCKED
 //   - ESM import('http') NOT MOCKED
 // -------------------------------------------
-// 20.1.0       | --loader
-//   - CJS require() NOT MOCKED
-//   - CJS createRequire() NOT MOCKED
-//   - ESM createRequire() NOT MOCKED
-
+// 20.0.0       | --loader
+//   - CJS require('http') NOT MOCKED
+//   - CJS createRequire('http') NOT MOCKED
+//   - ESM createRequire('http') NOT MOCKED
+// 20.0.0       | --require --import
+//   - ESM import from 'http' NOT MOCKED
+//   - CJS import('http') NOT MOCKED
+//   - ESM import('http') NOT MOCKED
 // -------------------------------------------
 // 20.8.1       | --loader
-//   - CJS require() NOT MOCKED
-//   - CJS createRequire() NOT MOCKED
-//   - ESM createRequire() NOT MOCKED
+//   - CJS require('http') NOT MOCKED
+//   - CJS createRequire('http') NOT MOCKED
+//   - ESM createRequire('http') NOT MOCKED
 // -------------------------------------------
 
 
