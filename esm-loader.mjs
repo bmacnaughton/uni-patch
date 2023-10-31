@@ -34,14 +34,10 @@ import { pathToFileURL } from 'node:url';
 // -------------------------------------------
 
 
-
-// improve this to detect -r, --require, --require=
-// also need to verify that argument to -r, etc. is our hook.
 //
-if (!global.__csi_cjshook) {
-  //
-  // setup CJS hooks
-  //
+// if CJS hooks are not already setup, setup CJS hooks
+//
+if (!global.__cjshook) {
   const originalRequire = Module.prototype.require;
   const originalCompile = Module.prototype._compile;
   const originalExtensions = Module._extensions['.js'];

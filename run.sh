@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 
-version=`node -v`
+version=$(node -v)
 
 # Remove the leading "v" if it's present
 version="${version#v}"
