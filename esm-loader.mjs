@@ -10,6 +10,7 @@ import { pathToFileURL } from 'node:url';
 //
 // node version | cmdline            | results
 // ------------ | ------------------ | -------
+// 16.19.0      | --loader           | ALL MOCKED
 // 18.18.2      | --loader           | ALL MOCKED
 // 20.1.0       | --require --loader | ALL MOCKED
 // 20.8.1       | --import           | ALL MOCKED
