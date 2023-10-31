@@ -34,8 +34,10 @@ import { pathToFileURL } from 'node:url';
 
 
 
-
-if (!process.execArgv.includes('--require')) {
+// improve this to detect -r, --require, --require=
+// also need to verify that argument to -r, etc. is our hook.
+//
+if (!global.__csi_cjshook) {
   //
   // setup CJS hooks
   //
@@ -68,10 +70,14 @@ if (!process.execArgv.includes('--require')) {
 //
 // setup ESM hooks
 //
+// if register exists use it, this is 20.6.0 or later.
+//
 if (Module.register) {
   Module.register(pathToFileURL("./esm-hooks.mjs"));
 }
 
+// it's not possible to conditionally export, but exporting undefined
+// values is close.
 import * as hooks from './esm-hooks.mjs';
 const finalHooks = Module.register ? {} : hooks;
 const { load, resolve, getSource, initialize, globalPreload } = finalHooks;

@@ -27,6 +27,9 @@ Module._extensions['.js'] = function(module, filename) {
   return originalExtensions.call(this, module, filename);
 };
 
+// set flag so we don't do this again.
+global.__csi_cjshook = true;
+
 if (semver.gte(process.version, '20.6.0')) {
   // this fails with no errors
   //Module.register('./hook.mjs');
